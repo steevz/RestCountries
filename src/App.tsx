@@ -5,29 +5,38 @@ import styled from 'styled-components'
 import Header from './components/Header'
 import CountrySearch from './components/CountrySearch'
 
-interface CountryCard {
-  flag: string
-  name: string
-  population: number
-  region: string
-  capital: string
-}
-
 
 const Input = styled.input`
     background-color: hsl(207,26%,17%);
     font-family: 'Nunito Sans';
     font-weight: 600;
     font-size: 16px;
-    width: 50%;
+    width: 40%;
     height: 50px;
     border: none;
     margin: 1em;
     outline: none;
     color: white;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
     padding: 0 2em;
+
+    &::placeholder {
+        color: white;
+    }
+`
+
+const Select = styled.select`
+    background-color: hsl(207,26%,17%);
+    font-family: 'Nunito Sans';
+    font-weight: 600;
+    font-size: 16px;
+    width: 30%;
+    height: 50px;
+    border: none;
+    margin: 1em;
+    outline: none;
+    color: white;
+    padding: 0 1em;
+    margin-left: auto;
 
     &::placeholder {
         color: white;
@@ -42,11 +51,21 @@ const Wrapper = styled.div`
     background-color: hsl(209,23%,22%);
     display: flex;
     flex-wrap: wrap;
+    margin: 1em auto;
+`
+
+const Option = styled.option`
+    border: 0;
+    background-color: hsl(207,26%,17%);
+    font-family: 'Nunito Sans';
+    font-weight: 600;
+    font-size: 16px;
+    outline: none;
 `
 
 const App:React.FC = () => {
 
-  const [drzave, setDrzave] = useState<Array<CountryCard>>([{
+  const [drzave, setDrzave] = useState([{
     flag: "",
     name: "",
     population: 0,
@@ -55,6 +74,14 @@ const App:React.FC = () => {
   }])
 
   const [q,setQ] = useState("")
+  const [s, setS] = useState("")
+  const [filteredCountries, setFilteredCountries] = useState([{
+    flag: "",
+    name: "",
+    population: 0,
+    region: "",
+    capital: ""
+  }])
 
 
   useEffect(() => {
@@ -65,17 +92,51 @@ const App:React.FC = () => {
   },[setDrzave])
 
 
-  const Search = (country: Array<CountryCard>) => {
-       return country.filter((country: any) => 
-       country.name.toLowerCase().indexOf(q) > -1 ||  
-       country.name.indexOf(q) > -1)
-  }
+  useEffect(() => {
+    setFilteredCountries(
+    drzave.filter((country: any) => 
+       country.name.toLowerCase().indexOf(q.toLowerCase()) > -1 ))
+  }, [q, drzave])
+
+
+  useEffect(() => {
+    setFilteredCountries(
+    drzave.filter((country: any) => 
+       country.region.toLowerCase().indexOf(s.toLowerCase()) > -1 ))
+  }, [s, drzave])
+
+
+  // unikatne regije (ne ponavljaju se iz niza objekata {drzave})
+  const unique = [...new Set(drzave.map(item => item.region))]; 
 
   return (
     <Wrapper>
       <Header />
-      <Input placeholder="⌕   Search for a country" value={q} onChange={(e:any) => setQ(e.target.value )}/>
-      <CountrySearch drzave={Search(drzave)} />
+      <Wrapper>
+        <Input placeholder="⌕   Search for a country" value={q} onChange={(e:any) => setQ(e.target.value )}/> 
+        <Select defaultValue={'default'} onChange={(e: any) => 
+          setS(e.target.value)
+          }>
+        <Option  disabled value={'default'}>Sort by region: </Option>
+        {unique.map( (region: any) => 
+        <Option
+                key = { region }
+                value ={ region }>
+                { region }
+        </Option> )}
+        </Select>
+      </Wrapper>
+      { filteredCountries.map((drzava:any) => 
+          <CountrySearch 
+            key = {drzava.name}
+            flag = {drzava.flag}
+            name = {drzava.name}
+            population = {drzava.population}
+            region = {drzava.region}
+            capital = {drzava.capital}
+          />
+        )
+      }
     </Wrapper>
   )
 }

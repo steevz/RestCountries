@@ -2,16 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 
-const Wrapper = styled.div`
-    max-width: 1024px;
-    margin: 0 auto;
-    width: 100%;
-    height: 100%;
-    background-color: hsl(209,23%,22%);
-    display: flex;
-    flex-wrap: wrap;
-`
-
 const DataInfoText = styled.p`
     color: #FFF;
     font-family: 'Nunito Sans';
@@ -28,19 +18,25 @@ const DataInfoTitle = styled.h2`
 `
 
 
-const CountrySearch  = ( { drzave }: any ) => { 
-    
+interface CountryCard {
+    flag: string
+    name: string
+    population: number
+    region: string
+    capital: string
+  }
+  
 
-    return (
-        <Wrapper>
-            {drzave.map( (drzava: any) => <div style={{ width: '23%', height: '450px', marginLeft: '1em'}} key={drzava.name}>
-                <div style={{ backgroundImage: `url(${drzava.flag})`, width: '100%', height: '50%', backgroundSize: 'cover', backgroundPosition: 'center', borderTopLeftRadius: '10px', borderTopRightRadius: '10px'}}></div>
-                <DataInfoTitle>{drzava.name}</DataInfoTitle>
-                <DataInfoText>Population: {drzava.population}</DataInfoText>
-                <DataInfoText>Region: {drzava.region}</DataInfoText>
-                <DataInfoText>Capital: {drzava.capital}</DataInfoText>
-            </div> )}
-        </Wrapper>
+const CountrySearch: React.FC<CountryCard>  = ( { flag, name, population, region, capital } ) => { 
+
+    return (   
+                <div style={{ width: '23%', height: '450px', marginLeft: '1em'}}>
+                    <div style={{ backgroundImage: `url(${flag})`, width: '100%', height: '50%', backgroundSize: 'cover', backgroundPosition: 'center', borderTopLeftRadius: '10px', borderTopRightRadius: '10px'}}></div>
+                    <DataInfoTitle>{name}</DataInfoTitle>
+                    <DataInfoText>Population: {population}</DataInfoText>
+                    <DataInfoText>Region: {region}</DataInfoText>
+                    <DataInfoText>Capital: {capital}</DataInfoText>
+                </div> 
     )
 }
 
